@@ -1,0 +1,7 @@
+El back:
+npm install
+npm start
+
+El front:
+npm install
+npm run dev
