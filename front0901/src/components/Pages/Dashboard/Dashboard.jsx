@@ -16,7 +16,7 @@ const Dashboard = () => {
 				</Box>
 				<Grid container spacing={2}>
 					<Grid item xs={12} sm={12}>
-						<img src='https://i.imgur.com/FOE8f2C.png' alt='...' style={{ position: 'absolute', width: '50%', height: 'auto', marginTop: 30 }} />
+						<img src='https://i.imgur.com/5YvtMI6.png' alt='...' style={{ position: 'absolute', width: '50%', height: 'auto', marginTop: 30 }} />
 					</Grid>
 				</Grid>
 			</Container>

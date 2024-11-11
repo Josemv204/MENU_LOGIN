@@ -96,6 +96,46 @@ app.post('/api/editar', (req, res) => {
 	connection.end()
 })
 
+//--------------||PROYECTOS||-------------------
+app.get('/api/proyectos', (req, res) => {
+	var connection = mysql.createConnection(credentials)
+	connection.query('SELECT * FROM proyectos', (err, rows) => {
+		if (err) {
+			res.status(500).send(err.sqlMessage)
+		} else {
+			res.status(200).send(rows)
+		}
+	})
+	connection.end()
+})
+
+app.post('/api/proyectos/guardar', (req, res) => {
+	const { titulo, descripcion, fecha } = req.body
+	const cuerpo = [[titulo, descripcion, fecha]]
+	var connection = mysql.createConnection(credentials)
+	connection.query('INSERT INTO proyectos (titulo, descripcion, fecha) VALUES ?', [cuerpo], (err, result) => {
+		if (err) {
+			res.status(500).send(err.sqlMessage)
+		} else {
+			res.status(200).send("Proyecto agregado")
+		}
+	})
+	connection.end()
+})
+
+app.post('/api/proyectos/eliminar', (req, res) => {
+	const { id } = req.body
+	var connection = mysql.createConnection(credentials)
+	connection.query('DELETE FROM proyectos WHERE id = ?', id, (err, result) => {
+		if (err) {
+			res.status(500).send(err.sqlMessage)
+		} else {
+			res.status(200).send("Proyecto eliminado")
+		}
+	})
+	connection.end()
+})
+
 app.listen(4000, async () => {
 	const ascified = await asciify('helmet.png', { fit: 'box', width: 10, height: 10 })
 	console.log(ascified)

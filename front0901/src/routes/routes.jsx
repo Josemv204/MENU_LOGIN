@@ -7,6 +7,8 @@ const Login = lazy(() => import('../components/Pages/Login'))
 const Home = lazy(() => import('../components/Pages/Home'))
 const Dashboard = lazy(() => import('../components/Pages/Dashboard'))
 const Usuarios = lazy(() => import('../components/Pages/Usuarios'))
+const Proyectos = lazy(() => import('../components/Pages/Proyectos'))
+
 
 const routes = [
 	{
@@ -32,6 +34,11 @@ const routes = [
 				path: `/${APP_VALUES.ROOT_ROUTE}/usuarios`,
 				exact: true,
 				render: props => <RouteController component={Usuarios} {...props} />
+			},
+			{
+				path: `/${APP_VALUES.ROOT_ROUTE}/proyectos`,
+				exact: true,
+				render: props => <RouteController component={Proyectos} {...props} />
 			},
 			{
 				path: `/${APP_VALUES.ROOT_ROUTE}/*`,
