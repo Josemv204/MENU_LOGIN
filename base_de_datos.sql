@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1:3306
--- Tiempo de generación: 13-11-2024 a las 04:28:13
+-- Tiempo de generación: 13-11-2024 a las 23:04:41
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -24,6 +24,28 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `clientes`
+--
+
+CREATE TABLE `clientes` (
+  `id` int(11) NOT NULL,
+  `avatar` varchar(300) NOT NULL,
+  `nombre` varchar(300) NOT NULL,
+  `empresa` varchar(300) NOT NULL,
+  `cargo` varchar(300) NOT NULL,
+  `vendedor_af` varchar(300) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `clientes`
+--
+
+INSERT INTO `clientes` (`id`, `avatar`, `nombre`, `empresa`, `cargo`, `vendedor_af`) VALUES
+(1, '', 'Alonso', 'Sony', 'Recursos humanos', 'Jose manjarres');
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `login`
 --
 
@@ -40,8 +62,7 @@ CREATE TABLE `login` (
 --
 
 INSERT INTO `login` (`id`, `user`, `username`, `password`, `avatar`) VALUES
-(1, 'Josè Manjarres', 'Josemv20', '123456', 'https://i.imgur.com/JypTlSR.png'),
-(2, 'Pepe Suarez', 'Pepito200', '1234', 'https://i.imgur.com/JypTlSR.png');
+(4, 'Jose Manjarres', 'Josemv20', '1234', 'https://i.imgur.com/JypTlSR.png');
 
 -- --------------------------------------------------------
 
@@ -63,32 +84,15 @@ CREATE TABLE `proyectos` (
 INSERT INTO `proyectos` (`id`, `titulo`, `descripcion`, `fecha`) VALUES
 (1, 'Prueba', 'Prueba de proyecto', '2024-11-02');
 
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `usuarios`
---
-
-CREATE TABLE `usuarios` (
-  `id` int(11) NOT NULL,
-  `avatar` varchar(300) NOT NULL,
-  `nombre` varchar(300) NOT NULL,
-  `apellido` varchar(300) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Volcado de datos para la tabla `usuarios`
---
-
-INSERT INTO `usuarios` (`id`, `avatar`, `nombre`, `apellido`) VALUES
-(1, 'https://i.imgur.com/nZitF99.jpeg', 'Jose', 'Manjarres'),
-(2, 'https://i.imgur.com/LZXiKT8.jpeg', 'Cindy', 'Rodriguez'),
-(3, 'https://i.imgur.com/JypTlSR.png', 'Juan', 'Soteldo'),
-(7, 'https://i.imgur.com/JypTlSR.png', 'Juan', 'Lopez');
-
 --
 -- Índices para tablas volcadas
 --
+
+--
+-- Indices de la tabla `clientes`
+--
+ALTER TABLE `clientes`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indices de la tabla `login`
@@ -103,32 +107,26 @@ ALTER TABLE `proyectos`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indices de la tabla `usuarios`
---
-ALTER TABLE `usuarios`
-  ADD PRIMARY KEY (`id`);
-
---
 -- AUTO_INCREMENT de las tablas volcadas
 --
+
+--
+-- AUTO_INCREMENT de la tabla `clientes`
+--
+ALTER TABLE `clientes`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT de la tabla `login`
 --
 ALTER TABLE `login`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT de la tabla `proyectos`
 --
 ALTER TABLE `proyectos`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
-
---
--- AUTO_INCREMENT de la tabla `usuarios`
---
-ALTER TABLE `usuarios`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
