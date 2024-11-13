@@ -1,5 +1,5 @@
 import React from 'react'
-import { PersonOutlined, HomeOutlined, AssignmentIndOutlined, ContactPhoneSharp } from '@mui/icons-material'
+import { PersonOutlined, HomeOutlined, AssignmentIndOutlined, ContactPhoneSharp, AddLocationAlt, MonetizationOn, Receipt } from '@mui/icons-material'
 
 const sidebarConfig = [
 	{
@@ -18,9 +18,19 @@ const sidebarConfig = [
 		icon: <ContactPhoneSharp />
 	},
 	{
-		title: 'proyectos',
+		title: 'Visitas',
 		path: '/app/proyectos',
-		icon: <AssignmentIndOutlined />
+		icon: <AddLocationAlt />
+	},
+	{
+		title: 'Ventas',
+		path: '/app/proyectos',
+		icon: <MonetizationOn />
+	},
+	{
+		title: 'Presupuestos',
+		path: '/app/proyectos',
+		icon: <Receipt />
 	}
 	
 ]
