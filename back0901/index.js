@@ -46,7 +46,7 @@ app.post('/api/login', (req, res) => {
 
 app.get('/api/usuarios', (req, res) => {
 	var connection = mysql.createConnection(credentials)
-	connection.query('SELECT * FROM usuarios', (err, rows) => {
+	connection.query('SELECT * FROM login', (err, rows) => {
 		if (err) {
 			res.status(500).send(err)
 		} else {
@@ -58,7 +58,7 @@ app.get('/api/usuarios', (req, res) => {
 app.post('/api/eliminar', (req, res) => {
 	const { id } = req.body
 	var connection = mysql.createConnection(credentials)
-	connection.query('DELETE FROM usuarios WHERE id = ?', id, (err, result) => {
+	connection.query('DELETE FROM login WHERE id = ?', id, (err, result) => {
 		if (err) {
 			res.status(500).send(err)
 		} else {
@@ -69,10 +69,10 @@ app.post('/api/eliminar', (req, res) => {
 })
 
 app.post('/api/guardar', (req, res) => {
-	const { avatar, nombre, apellido } = req.body
-	const params = [[avatar, nombre, apellido]]
+	const { avatar, user, username, password } = req.body
+	const params = [[avatar, user, username, password]]
 	var connection = mysql.createConnection(credentials)
-	connection.query('INSERT INTO usuarios (avatar, nombre, apellido) VALUES ?', [params], (err, result) => {
+	connection.query('INSERT INTO login (avatar, user, username, password) VALUES ?', [params], (err, result) => {
 		if (err) {
 			res.status(500).send(err)
 		} else {
@@ -83,10 +83,10 @@ app.post('/api/guardar', (req, res) => {
 })
 
 app.post('/api/editar', (req, res) => {
-	const { id, avatar, nombre, apellido } = req.body
-	const params = [avatar, nombre, apellido, id]
+	const { id, avatar, user, username, password } = req.body
+	const params = [avatar, user, username, password, id]
 	var connection = mysql.createConnection(credentials)
-	connection.query('UPDATE usuarios set avatar = ?, nombre = ?, apellido = ? WHERE id = ?', params, (err, result) => {
+	connection.query('UPDATE login set avatar = ?, user = ?, username = ?, password = ? WHERE id = ?', params, (err, result) => {
 		if (err) {
 			res.status(500).send(err)
 		} else {

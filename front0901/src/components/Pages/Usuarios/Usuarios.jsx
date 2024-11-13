@@ -27,14 +27,14 @@ const Usuarios = () => {
 		{ field: 'id', headerName: 'ID', width: 120 },
 		{
 			field: 'avatar',
-			headerName: 'Avatar',
+			headerName: '',
 			width: 200,
 			renderCell: (params) => (
 				<Avatar src={params.value} />
 			)
 		},
-		{ field: 'nombre', headerName: 'Nombre', width: 220 },
-		{ field: 'apellido', headerName: 'Apellido', width: 220 },
+		{ field: 'user', headerName: 'Nombre', width: 220 },
+		{ field: 'username', headerName: 'Username', width: 220 },
 		{
 			field: '',
 			headerName: 'Acciones',
@@ -143,8 +143,8 @@ const Usuarios = () => {
 						<Grid item xs={12} sm={12}>
 							<TextField
 								margin='normal'
-								name='nombre'
-								value={body.nombre}
+								name='user'
+								value={body.user}
 								onChange={onChange}
 								variant='outlined'
 								size='small'
@@ -156,14 +156,27 @@ const Usuarios = () => {
 						<Grid item xs={12} sm={12}>
 							<TextField
 								margin='normal'
-								name='apellido'
-								value={body.apellido}
+								name='username'
+								value={body.username}
 								onChange={onChange}
 								variant='outlined'
 								size='small'
 								color='primary'
 								fullWidth
-								label='Apellido'
+								label='Username'
+							/>
+						</Grid>
+						<Grid item xs={12} sm={12}>
+							<TextField
+								margin='normal'
+								name='password'
+								value={body.password}
+								onChange={onChange}
+								variant='outlined'
+								size='small'
+								color='primary'
+								fullWidth
+								label='Contraseña'
 							/>
 						</Grid>
 					</Grid>
