@@ -123,14 +123,54 @@ app.post('/api/proyectos/guardar', (req, res) => {
 	connection.end()
 })
 
-app.post('/api/proyectos/eliminar', (req, res) => {
+//--------------||CLIENTES||-------------------
+app.get('/api/clientes', (req, res) => {
+	var connection = mysql.createConnection(credentials)
+	connection.query('SELECT * FROM clientes', (err, rows) => {
+		if (err) {
+			res.status(500).send(err)
+		} else {
+			res.status(200).send(rows)
+		}
+	})
+})
+
+app.post('/api/eliminar2', (req, res) => {
 	const { id } = req.body
 	var connection = mysql.createConnection(credentials)
-	connection.query('DELETE FROM proyectos WHERE id = ?', id, (err, result) => {
+	connection.query('DELETE FROM clientes WHERE id = ?', id, (err, result) => {
 		if (err) {
-			res.status(500).send(err.sqlMessage)
+			res.status(500).send(err)
 		} else {
-			res.status(200).send("Proyecto eliminado")
+			res.status(200).send({ "status": "success", "message": "Usuario Eliminado" })
+		}
+	})
+	connection.end()
+})
+
+app.post('/api/guardar2', (req, res) => {
+	const { avatar, nombre, empresa, cargo, vendedor_af } = req.body
+	const params = [[avatar, nombre, empresa, cargo, vendedor_af]]
+	var connection = mysql.createConnection(credentials)
+	connection.query('INSERT INTO clientes (avatar, nombre, empresa, cargo, vendedor_af) VALUES ?', [params], (err, result) => {
+		if (err) {
+			res.status(500).send(err)
+		} else {
+			res.status(200).send({ "status": "success", "message": "Usuario creado" })
+		}
+	})
+	connection.end()
+})
+
+app.post('/api/editar2', (req, res) => {
+	const { id, avatar, nombre, empresa, cargo, vendedor_af } = req.body
+	const params = [avatar, nombre, empresa, cargo, vendedor_af, id]
+	var connection = mysql.createConnection(credentials)
+	connection.query('UPDATE clientes set avatar = ?, nombre = ?, empresa = ?, cargo = ?, vendedor_af = ? WHERE id = ?', params, (err, result) => {
+		if (err) {
+			res.status(500).send(err)
+		} else {
+			res.status(200).send({ "status": "success", "message": "Usuario editado" })
 		}
 	})
 	connection.end()

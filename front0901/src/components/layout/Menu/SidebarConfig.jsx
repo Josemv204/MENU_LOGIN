@@ -1,5 +1,5 @@
 import React from 'react'
-import { PersonOutlined, HomeOutlined, AssignmentIndOutlined } from '@mui/icons-material'
+import { PersonOutlined, HomeOutlined, AssignmentIndOutlined, ContactPhoneSharp } from '@mui/icons-material'
 
 const sidebarConfig = [
 	{
@@ -8,9 +8,14 @@ const sidebarConfig = [
 		icon: <HomeOutlined />
 	},
 	{
-		title: 'usuarios',
+		title: 'vendedores',
 		path: '/app/usuarios',
 		icon: <PersonOutlined />
+	},
+	{
+		title: 'clientes',
+		path: '/app/clientes',
+		icon: <ContactPhoneSharp />
 	},
 	{
 		title: 'proyectos',

@@ -6,35 +6,36 @@ import Page from '../../common/Page'
 import ToastAutoHide from '../../common/ToastAutoHide'
 import CommonTable from '../../common/CommonTable'
 
-const Usuarios = () => {
+const Clientes = () => {
 	const initialState = {
 		avatar: 'https://i.imgur.com/JypTlSR.png',
 		nombre: "",
 		apellido: ""
 	}
-	const [usuariosList, setUsuariosList] = useState([])
+	const [clientesList, setClientesList] = useState([])
 	const [body, setBody] = useState(initialState)
 	const [openDialog, setOpenDialog] = useState(false)
 	const [isEdit, setIsEdit] = useState(false)
 	const [mensaje, setMensaje] = useState({ ident: null, message: null, type: null })
 
 	const init = async () => {
-		const { data } = await ApiRequest().get('/usuarios')
-		setUsuariosList(data)
+		const { data } = await ApiRequest().get('/clientes')
+		setClientesList(data)
 	}
 
 	const columns = [
-		{ field: 'id', headerName: 'ID', width: 120 },
 		{
 			field: 'avatar',
-			headerName: 'Vendedores',
+			headerName: 'Clientes',
 			width: 200,
 			renderCell: (params) => (
 				<Avatar src={params.value} />
 			)
 		},
-		{ field: 'user', headerName: 'Nombre', width: 220 },
-		{ field: 'username', headerName: 'Username', width: 220 },
+		{ field: 'nombre', headerName: 'Nombre', width: 220 },
+		{ field: 'empresa', headerName: 'Empresa', width: 220 },
+        { field: 'cargo', headerName: 'Cargo', width: 220 },
+        { field: 'vendedor_af', headerName: 'Vendedor afiliado', width: 220 },
 		{
 			field: '',
 			headerName: 'Acciones',
@@ -58,7 +59,7 @@ const Usuarios = () => {
 
 	const onDelete = async (id) => {
 		try {
-			const { data } = await ApiRequest().post('/eliminar', { id: id })
+			const { data } = await ApiRequest().post('/eliminar2', { id: id })
 			setMensaje({
 				ident: new Date().getTime(),
 				message: data.message,
@@ -88,7 +89,7 @@ const Usuarios = () => {
 
 	const onSubmit = async () => {
 		try {
-			const { data } = await ApiRequest().post('/guardar', body)
+			const { data } = await ApiRequest().post('/guardar2', body)
 			handleDialog()
 			setBody(initialState)
 			setMensaje({
@@ -109,7 +110,7 @@ const Usuarios = () => {
 
 	const onEdit = async () => {
 		try {
-			const { data } = await ApiRequest().post('/editar', body)
+			const { data } = await ApiRequest().post('/editar2', body)
 			handleDialog()
 			setBody(initialState)
 			setMensaje({
@@ -143,8 +144,8 @@ const Usuarios = () => {
 						<Grid item xs={12} sm={12}>
 							<TextField
 								margin='normal'
-								name='user'
-								value={body.user}
+								name='nombre'
+								value={body.nombre}
 								onChange={onChange}
 								variant='outlined'
 								size='small'
@@ -156,27 +157,40 @@ const Usuarios = () => {
 						<Grid item xs={12} sm={12}>
 							<TextField
 								margin='normal'
-								name='username'
-								value={body.username}
+								name='empresa'
+								value={body.empresa}
 								onChange={onChange}
 								variant='outlined'
 								size='small'
 								color='primary'
 								fullWidth
-								label='Username'
+								label='Empresa'
+							/>
+                            </Grid>
+						<Grid item xs={12} sm={12}>
+							<TextField
+								margin='normal'
+								name='cargo'
+								value={body.cargo}
+								onChange={onChange}
+								variant='outlined'
+								size='small'
+								color='primary'
+								fullWidth
+								label='Cargo'
 							/>
 						</Grid>
 						<Grid item xs={12} sm={12}>
 							<TextField
 								margin='normal'
-								name='password'
-								value={body.password}
+								name='vendedor_af'
+								value={body.vendedor_af}
 								onChange={onChange}
 								variant='outlined'
 								size='small'
 								color='primary'
 								fullWidth
-								label='Contraseña'
+								label='Vendedor afiliado'
 							/>
 						</Grid>
 					</Grid>
@@ -186,11 +200,11 @@ const Usuarios = () => {
 					<Button variant='contained' color='primary' onClick={isEdit ? () => onEdit() : () => onSubmit()}>guardar</Button>
 				</DialogActions>
 			</Dialog>
-			<Page title="SELLER | Vendedores">
+			<Page title="SELLER | Clientes">
 				<ToastAutoHide message={mensaje} />
 				<Container maxWidth='lg'>
 					<Box sx={{ pb: 5 }}>
-						<Typography variant="h5">Lista de vendedores</Typography>
+						<Typography variant="h5">Lista de clientes</Typography>
 					</Box>
 					<Grid container spacing={2}>
 						<Grid item xs={12} sm={4}>
@@ -198,7 +212,7 @@ const Usuarios = () => {
 						</Grid>
 						<Grid item xs={12} sm={8} />
 						<Grid item xs={12} sm={12}>
-							<CommonTable data={usuariosList} columns={columns} />
+							<CommonTable data={clientesList} columns={columns} />
 						</Grid>
 					</Grid>
 				</Container>
@@ -207,5 +221,4 @@ const Usuarios = () => {
 	)
 }
 
-export default Usuarios
-
+export default Clientes
