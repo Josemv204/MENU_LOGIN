@@ -18,14 +18,14 @@ const sidebarConfig = [
 		icon: <ContactPhoneSharp />
 	},
 	{
+		title: 'Ventas',
+		path: '/app/ventas',
+		icon: <MonetizationOn />
+	},
+	{
 		title: 'Visitas',
 		path: '/app/proyectos',
 		icon: <AddLocationAlt />
-	},
-	{
-		title: 'Ventas',
-		path: '/app/proyectos',
-		icon: <MonetizationOn />
 	},
 	{
 		title: 'Presupuestos',

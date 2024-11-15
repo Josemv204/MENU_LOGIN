@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1:3306
--- Tiempo de generación: 14-11-2024 a las 00:18:34
+-- Tiempo de generación: 16-11-2024 a las 00:24:29
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -62,6 +62,8 @@ CREATE TABLE `login` (
 --
 
 INSERT INTO `login` (`id`, `user`, `username`, `password`, `avatar`) VALUES
+(1, 'Rafael Gomez', 'Rafa1020', '12345', ''),
+(2, 'Cindy Rodriguez', 'Cindy21', '1234', ''),
 (4, 'Jose Manjarres', 'Josemv20', '1234', 'https://i.imgur.com/JypTlSR.png');
 
 -- --------------------------------------------------------
@@ -119,7 +121,14 @@ CREATE TABLE `ventas` (
 --
 
 INSERT INTO `ventas` (`id`, `fecha`, `monto`, `objeto`, `vendedor_id`, `cliente_id`) VALUES
-(1, '2023-11-13', 1500.00, NULL, 4, 1);
+(1, '2023-11-13', 1500.00, 'hojita', 4, 1),
+(2, '2024-11-13', 1000.00, 'Papelbon', 4, 1),
+(3, '2024-12-13', 1222.00, 'bauche', 4, 1),
+(4, '2022-11-13', 1000.00, 'hoja', 2, 1),
+(5, '2023-10-13', 2000.00, 'Paquete', 2, 1),
+(6, '2024-9-13', 1000.00, 'caja', 1, 1),
+(7, '2020-11-15', 200.00, 'Lapiz', 2, 1),
+(9, '2024-11-15', 10.00, 'Calcomanias', 4, 1);
 
 -- --------------------------------------------------------
 
@@ -213,7 +222,7 @@ ALTER TABLE `proyectos`
 -- AUTO_INCREMENT de la tabla `ventas`
 --
 ALTER TABLE `ventas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT de la tabla `visitas`

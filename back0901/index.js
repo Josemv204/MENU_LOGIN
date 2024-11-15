@@ -98,30 +98,97 @@ app.post('/api/editar', (req, res) => {
 
 //--------------||PROYECTOS||-------------------
 app.get('/api/proyectos', (req, res) => {
-	var connection = mysql.createConnection(credentials)
-	connection.query('SELECT * FROM proyectos', (err, rows) => {
-		if (err) {
-			res.status(500).send(err.sqlMessage)
-		} else {
-			res.status(200).send(rows)
-		}
-	})
-	connection.end()
-})
+    var connection = mysql.createConnection(credentials);
+    connection.query(`
+        SELECT v.id, v.fecha, v.monto, v.objeto, 
+               l.user AS vendedor_nombre, 
+               c.nombre AS cliente_nombre 
+        FROM ventas v 
+        JOIN login l ON v.vendedor_id = l.id 
+        JOIN clientes c ON v.cliente_id = c.id;
+    `, (err, rows) => {
+        if (err) {
+            res.status(500).send(err.sqlMessage);
+        } else {
+            res.status(200).send(rows);
+        }
+        connection.end();
+    });
+});
+
 
 app.post('/api/proyectos/guardar', (req, res) => {
-	const { titulo, descripcion, fecha } = req.body
-	const cuerpo = [[titulo, descripcion, fecha]]
-	var connection = mysql.createConnection(credentials)
-	connection.query('INSERT INTO proyectos (titulo, descripcion, fecha) VALUES ?', [cuerpo], (err, result) => {
-		if (err) {
-			res.status(500).send(err.sqlMessage)
-		} else {
-			res.status(200).send("Proyecto agregado")
-		}
-	})
-	connection.end()
-})
+    const { fecha, vendedorNombre, clienteNombre, monto, objeto } = req.body;
+    
+    // Establecer la conexión a la base de datos
+    var connection = mysql.createConnection(credentials);
+    
+    // Buscar el ID del vendedor en la tabla login
+    connection.query('SELECT id FROM login WHERE user = ?', [vendedorNombre], (err, vendedorResult) => {
+        if (err) {
+            res.status(500).send(err.sqlMessage);
+            connection.end();
+            return;
+        }
+        
+        if (vendedorResult.length === 0) {
+            res.status(404).send("Vendedor no encontrado");
+            connection.end();
+            return;
+        }
+        
+        const vendedorId = vendedorResult[0].id;
+        
+        // Buscar el ID del cliente en la tabla clientes
+        connection.query('SELECT id FROM clientes WHERE nombre = ?', [clienteNombre], (err, clienteResult) => {
+            if (err) {
+                res.status(500).send(err.sqlMessage);
+                connection.end();
+                return;
+            }
+
+            if (clienteResult.length === 0) {
+                res.status(404).send("Cliente no encontrado");
+                connection.end();
+                return;
+            }
+
+            const clienteId = clienteResult[0].id;
+
+            // Insertar en la tabla ventas
+            const cuerpo = [[fecha, monto, objeto, vendedorId, clienteId]];
+
+            connection.query('INSERT INTO ventas (fecha, monto, objeto, vendedor_id, cliente_id) VALUES ?', [cuerpo], (err, result) => {
+                if (err) {
+                    res.status(500).send(err.sqlMessage);
+                } else {
+                    res.status(200).send("Venta agregada");
+                }
+                connection.end();
+            });
+        });
+    });
+});
+
+// Ruta para eliminar un proyecto
+app.post('/api/proyectos/eliminar', (req, res) => {
+    const { id } = req.body;
+    const connection = mysql.createConnection(credentials);
+
+    // Consulta SQL para eliminar un registro
+    connection.query('DELETE FROM ventas WHERE id = ?', [id], (err, result) => {
+        if (err) {
+            res.status(500).send(err.sqlMessage);
+        } else if (result.affectedRows === 0) {
+            res.status(404).send('Registro no encontrado');
+        } else {
+            res.status(200).send('Registro eliminado con éxito');
+        }
+        connection.end();
+    });
+});
+
+
 
 //--------------||CLIENTES||-------------------
 app.get('/api/clientes', (req, res) => {
