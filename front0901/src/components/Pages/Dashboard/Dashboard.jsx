@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Chart as ChartJS, defaults } from "chart.js/auto";
 import { Bar, Doughnut, Line } from "react-chartjs-2";
+import axios from "axios"; // Para la solicitud al backend
 
 import "./App.css";
 
@@ -16,6 +17,20 @@ defaults.plugins.title.font.size = 20;
 defaults.plugins.title.color = "black";
 
 export const Dashboard = () => {
+  const [categoryData, setCategoryData] = useState([]);
+
+  // Hacemos la solicitud al backend para obtener los datos de ventas por vendedor
+  useEffect(() => {
+    axios
+      .get("http://localhost:4000/api/dashboard") // Ajusta la URL si es necesario
+      .then((response) => {
+        setCategoryData(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+      });
+  }, []);
+
   return (
     <div className="App">
       <div className="dataCard revenueCard">
@@ -30,7 +45,7 @@ export const Dashboard = () => {
                 borderColor: "#064FF0",
               },
               {
-                label: "Presopuestos",
+                label: "Presupuestos",
                 data: revenueData.map((data) => data.cost),
                 backgroundColor: "#FF3030",
                 borderColor: "#FF3030",
@@ -82,11 +97,11 @@ export const Dashboard = () => {
       <div className="dataCard categoryCard">
         <Doughnut
           data={{
-            labels: sourceData.map((data) => data.label),
+            labels: categoryData.map((data) => data.nombre_vendedor), // Ahora usamos nombre_vendedor
             datasets: [
               {
-                label: "Count",
-                data: sourceData.map((data) => data.value),
+                label: "Total de Ventas",
+                data: categoryData.map((data) => data.total_ventas), // Ahora usamos total_ventas
                 backgroundColor: [
                   "rgba(43, 63, 229, 0.8)",
                   "rgba(250, 192, 19, 0.8)",
@@ -113,4 +128,4 @@ export const Dashboard = () => {
   );
 };
 
-export default Dashboard
+export default Dashboard;

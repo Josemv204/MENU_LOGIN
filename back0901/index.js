@@ -176,6 +176,18 @@ app.post('/api/editar2', (req, res) => {
 	connection.end()
 })
 
+//--------------||GRAFICAS||-------------------
+app.get('/api/dashboard', (req, res) => {
+	var connection = mysql.createConnection(credentials)
+	connection.query('SELECT v.vendedor_id, l.user AS nombre_vendedor, COUNT(*) AS total_ventas FROM ventas v JOIN login l ON v.vendedor_id = l.id GROUP BY v.vendedor_id, l.user ORDER BY total_ventas DESC LIMIT 3', (err, rows) => {
+		if (err) {
+			res.status(500).send(err)
+		} else {
+			res.status(200).send(rows)
+		}
+	})
+})
+
 app.listen(4000, async () => {
 	const ascified = await asciify('helmet.png', { fit: 'box', width: 10, height: 10 })
 	console.log(ascified)
