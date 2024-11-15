@@ -1,27 +1,116 @@
-import React from 'react'
-import { Box, Container, Typography, Grid } from '@mui/material'
-import Page from '../../common/Page'
+import React from "react";
+import { Chart as ChartJS, defaults } from "chart.js/auto";
+import { Bar, Doughnut, Line } from "react-chartjs-2";
 
-// ----------------------------------------------------------------------
+import "./App.css";
 
+import revenueData from "./data/revenueData.json";
+import sourceData from "./data/sourceData.json";
 
-const Dashboard = () => {
+defaults.maintainAspectRatio = false;
+defaults.responsive = true;
 
-	return (
-		<Page title="SELLER | Dashboard">
-			<Container maxWidth="xl">
-				<Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-					<Typography sx={{ mt: 3, fontWeight: 'bold' }} variant='h5'>Bienvenido a</Typography>
-					<Typography sx={{ mt: 3, fontWeight: 'bold' }} variant='h2'></Typography>
-				</Box>
-				<Grid container spacing={2}>
-					<Grid item xs={12} sm={12}>
-						<img src='https://i.imgur.com/5YvtMI6.png' alt='...' style={{ position: 'absolute', width: '50%', height: 'auto', marginTop: 30 }} />
-					</Grid>
-				</Grid>
-			</Container>
-		</Page>
-	)
-}
+defaults.plugins.title.display = true;
+defaults.plugins.title.align = "start";
+defaults.plugins.title.font.size = 20;
+defaults.plugins.title.color = "black";
+
+export const Dashboard = () => {
+  return (
+    <div className="App">
+      <div className="dataCard revenueCard">
+        <Line
+          data={{
+            labels: revenueData.map((data) => data.label),
+            datasets: [
+              {
+                label: "Ventas",
+                data: revenueData.map((data) => data.revenue),
+                backgroundColor: "#064FF0",
+                borderColor: "#064FF0",
+              },
+              {
+                label: "Presopuestos",
+                data: revenueData.map((data) => data.cost),
+                backgroundColor: "#FF3030",
+                borderColor: "#FF3030",
+              },
+            ],
+          }}
+          options={{
+            elements: {
+              line: {
+                tension: 0.5,
+              },
+            },
+            plugins: {
+              title: {
+                text: "Ventas y presupuestos mensuales",
+              },
+            },
+          }}
+        />
+      </div>
+
+      <div className="dataCard customerCard">
+        <Bar
+          data={{
+            labels: sourceData.map((data) => data.label),
+            datasets: [
+              {
+                label: "Cuenta",
+                data: sourceData.map((data) => data.value),
+                backgroundColor: [
+                  "rgba(43, 63, 229, 0.8)",
+                  "rgba(250, 192, 19, 0.8)",
+                  "rgba(253, 135, 135, 0.8)",
+                ],
+                borderRadius: 5,
+              },
+            ],
+          }}
+          options={{
+            plugins: {
+              title: {
+                text: "Visitas a clientes",
+              },
+            },
+          }}
+        />
+      </div>
+
+      <div className="dataCard categoryCard">
+        <Doughnut
+          data={{
+            labels: sourceData.map((data) => data.label),
+            datasets: [
+              {
+                label: "Count",
+                data: sourceData.map((data) => data.value),
+                backgroundColor: [
+                  "rgba(43, 63, 229, 0.8)",
+                  "rgba(250, 192, 19, 0.8)",
+                  "rgba(253, 135, 135, 0.8)",
+                ],
+                borderColor: [
+                  "rgba(43, 63, 229, 0.8)",
+                  "rgba(250, 192, 19, 0.8)",
+                  "rgba(253, 135, 135, 0.8)",
+                ],
+              },
+            ],
+          }}
+          options={{
+            plugins: {
+              title: {
+                text: "Mejores vendedores",
+              },
+            },
+          }}
+        />
+      </div>
+    </div>
+  );
+};
 
 export default Dashboard
