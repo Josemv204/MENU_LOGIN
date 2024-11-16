@@ -34,7 +34,7 @@ const Clientes = () => {
 		},
 		{ field: 'nombre', headerName: 'Nombre', width: 220 },
 		{ field: 'empresa', headerName: 'Empresa', width: 220 },
-        { field: 'cargo', headerName: 'Cargo', width: 220 },
+        { field: 'contacto', headerName: 'Contacto', width: 220 },
         { field: 'vendedor_af', headerName: 'Vendedor afiliado', width: 220 },
 		{
 			field: '',
@@ -170,14 +170,14 @@ const Clientes = () => {
 						<Grid item xs={12} sm={12}>
 							<TextField
 								margin='normal'
-								name='cargo'
-								value={body.cargo}
+								name='contacto'
+								value={body.contacto}
 								onChange={onChange}
 								variant='outlined'
 								size='small'
 								color='primary'
 								fullWidth
-								label='Cargo'
+								label='Contacto'
 							/>
 						</Grid>
 						<Grid item xs={12} sm={12}>

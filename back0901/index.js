@@ -280,6 +280,105 @@ app.post('/api/presupuestos/eliminar', (req, res) => {
     });
 });
 
+//--------------||VISITAS||-------------------
+app.get('/api/visitas', (req, res) => {
+    var connection = mysql.createConnection(credentials);
+    connection.query(`
+        SELECT 
+            visitas.id,  -- Asegúrate de incluir esta columna
+            visitas.fecha,
+            visitas.motivo,
+            login.user AS nombre_vendedor,
+            clientes.nombre AS nombre_cliente
+        FROM 
+            visitas
+        JOIN 
+            login ON visitas.vendedor_id = login.id
+        JOIN 
+            clientes ON visitas.cliente_id = clientes.id;
+    `, (err, rows) => {
+        if (err) {
+            res.status(500).send(err.sqlMessage);
+        } else {
+            res.status(200).send(rows);
+        }
+        connection.end();
+    });
+});
+
+
+
+app.post('/api/visitas/guardar', (req, res) => {
+    const { fecha, motivo, vendedorNombre, clienteNombre } = req.body;
+    
+    // Establecer la conexión a la base de datos
+    var connection = mysql.createConnection(credentials);
+    
+    // Buscar el ID del vendedor en la tabla login
+    connection.query('SELECT id FROM login WHERE user = ?', [vendedorNombre], (err, vendedorResult) => {
+        if (err) {
+            res.status(500).send(err.sqlMessage);
+            connection.end();
+            return;
+        }
+        
+        if (vendedorResult.length === 0) {
+            res.status(404).send("Vendedor no encontrado");
+            connection.end();
+            return;
+        }
+        
+        const vendedorId = vendedorResult[0].id;
+        
+        // Buscar el ID del cliente en la tabla clientes
+        connection.query('SELECT id FROM clientes WHERE nombre = ?', [clienteNombre], (err, clienteResult) => {
+            if (err) {
+                res.status(500).send(err.sqlMessage);
+                connection.end();
+                return;
+            }
+
+            if (clienteResult.length === 0) {
+                res.status(404).send("Cliente no encontrado");
+                connection.end();
+                return;
+            }
+
+            const clienteId = clienteResult[0].id;
+
+            // Insertar en la tabla ventas
+            const cuerpo = [[fecha, motivo, vendedorId, clienteId]];
+
+            connection.query('INSERT INTO visitas (fecha, motivo, vendedor_id, cliente_id) VALUES ?', [cuerpo], (err, result) => {
+                if (err) {
+                    res.status(500).send(err.sqlMessage);
+                } else {
+                    res.status(200).send("Visita");
+                }
+                connection.end();
+            });
+        });
+    });
+});
+
+// Ruta para eliminar un presupuesto
+app.post('/api/visitas/eliminar', (req, res) => {
+    const { id } = req.body;
+    const connection = mysql.createConnection(credentials);
+
+    // Consulta SQL para eliminar un registro
+    connection.query('DELETE FROM visitas WHERE id = ?', [id], (err, result) => {
+        if (err) {
+            res.status(500).send(err.sqlMessage);
+        } else if (result.affectedRows === 0) {
+            res.status(404).send('Registro no encontrado');
+        } else {
+            res.status(200).send('Registro eliminado con éxito');
+        }
+        connection.end();
+    });
+});
+
 
 //--------------||CLIENTES||-------------------
 app.get('/api/clientes', (req, res) => {
@@ -307,10 +406,10 @@ app.post('/api/eliminar2', (req, res) => {
 })
 
 app.post('/api/guardar2', (req, res) => {
-	const { avatar, nombre, empresa, cargo, vendedor_af } = req.body
-	const params = [[avatar, nombre, empresa, cargo, vendedor_af]]
+	const { avatar, nombre, empresa, contacto, vendedor_af } = req.body
+	const params = [[avatar, nombre, empresa, contacto, vendedor_af]]
 	var connection = mysql.createConnection(credentials)
-	connection.query('INSERT INTO clientes (avatar, nombre, empresa, cargo, vendedor_af) VALUES ?', [params], (err, result) => {
+	connection.query('INSERT INTO clientes (avatar, nombre, empresa, contacto, vendedor_af) VALUES ?', [params], (err, result) => {
 		if (err) {
 			res.status(500).send(err)
 		} else {
@@ -321,10 +420,10 @@ app.post('/api/guardar2', (req, res) => {
 })
 
 app.post('/api/editar2', (req, res) => {
-	const { id, avatar, nombre, empresa, cargo, vendedor_af } = req.body
-	const params = [avatar, nombre, empresa, cargo, vendedor_af, id]
+	const { id, avatar, nombre, empresa, contacto, vendedor_af } = req.body
+	const params = [avatar, nombre, empresa, contacto, vendedor_af, id]
 	var connection = mysql.createConnection(credentials)
-	connection.query('UPDATE clientes set avatar = ?, nombre = ?, empresa = ?, cargo = ?, vendedor_af = ? WHERE id = ?', params, (err, result) => {
+	connection.query('UPDATE clientes set avatar = ?, nombre = ?, empresa = ?, contacto = ?, vendedor_af = ? WHERE id = ?', params, (err, result) => {
 		if (err) {
 			res.status(500).send(err)
 		} else {
@@ -345,6 +444,59 @@ app.get('/api/dashboard', (req, res) => {
 		}
 	})
 })
+
+app.get('/api/dashboard/meses', (req, res) => {
+    var connection = mysql.createConnection(credentials);
+    connection.query(`
+        SELECT 
+            CASE 
+                WHEN MONTH(fecha) = 1 THEN "Enero"
+                WHEN MONTH(fecha) = 2 THEN "Febrero"
+                WHEN MONTH(fecha) = 3 THEN "Marzo"
+                WHEN MONTH(fecha) = 4 THEN "Abril"
+                WHEN MONTH(fecha) = 5 THEN "Mayo"
+                WHEN MONTH(fecha) = 6 THEN "Junio"
+                WHEN MONTH(fecha) = 7 THEN "Julio"
+                WHEN MONTH(fecha) = 8 THEN "Agosto"
+                WHEN MONTH(fecha) = 9 THEN "Septiembre"
+                WHEN MONTH(fecha) = 10 THEN "Octubre"
+                WHEN MONTH(fecha) = 11 THEN "Noviembre"
+                WHEN MONTH(fecha) = 12 THEN "Diciembre"
+            END AS mes, 
+            COUNT(*) AS total, 
+            "ventas" AS origen 
+        FROM ventas
+        GROUP BY mes
+        UNION ALL 
+        SELECT 
+            CASE  
+                WHEN MONTH(fecha) = 1 THEN "Enero"
+                WHEN MONTH(fecha) = 2 THEN "Febrero"
+                WHEN MONTH(fecha) = 3 THEN "Marzo"
+                WHEN MONTH(fecha) = 4 THEN "Abril"
+                WHEN MONTH(fecha) = 5 THEN "Mayo"
+                WHEN MONTH(fecha) = 6 THEN "Junio"
+                WHEN MONTH(fecha) = 7 THEN "Julio"
+                WHEN MONTH(fecha) = 8 THEN "Agosto"
+                WHEN MONTH(fecha) = 9 THEN "Septiembre"
+                WHEN MONTH(fecha) = 10 THEN "Octubre"
+                WHEN MONTH(fecha) = 11 THEN "Noviembre"
+                WHEN MONTH(fecha) = 12 THEN "Diciembre"
+            END AS mes, 
+            COUNT(*) AS total, 
+            "presupuestos" AS origen 
+        FROM presupuestos
+        GROUP BY mes
+        ORDER BY FIELD(mes, "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre");
+    `, (err, rows) => {
+        if (err) {
+            res.status(500).send(err);
+        } else {
+            res.status(200).send(rows);
+        }
+    });
+});
+
 
 app.listen(4000, async () => {
 	const ascified = await asciify('helmet.png', { fit: 'box', width: 10, height: 10 })

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1:3306
--- Tiempo de generación: 16-11-2024 a las 00:24:29
+-- Tiempo de generación: 16-11-2024 a las 03:04:42
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -32,7 +32,7 @@ CREATE TABLE `clientes` (
   `avatar` varchar(300) NOT NULL,
   `nombre` varchar(300) NOT NULL,
   `empresa` varchar(300) NOT NULL,
-  `cargo` varchar(300) NOT NULL,
+  `contacto` varchar(300) NOT NULL,
   `vendedor_af` varchar(300) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -40,8 +40,8 @@ CREATE TABLE `clientes` (
 -- Volcado de datos para la tabla `clientes`
 --
 
-INSERT INTO `clientes` (`id`, `avatar`, `nombre`, `empresa`, `cargo`, `vendedor_af`) VALUES
-(1, '', 'Alonso', 'Sony', 'Recursos humanos', 'Jose manjarres');
+INSERT INTO `clientes` (`id`, `avatar`, `nombre`, `empresa`, `contacto`, `vendedor_af`) VALUES
+(1, '', 'Alonso', 'Sony', '04121239896', 'Jose manjarres');
 
 -- --------------------------------------------------------
 
@@ -74,12 +74,22 @@ INSERT INTO `login` (`id`, `user`, `username`, `password`, `avatar`) VALUES
 
 CREATE TABLE `presupuestos` (
   `id` int(11) NOT NULL,
-  `fecha` date DEFAULT NULL,
+  `fecha` varchar(300) DEFAULT NULL,
   `monto` decimal(10,2) DEFAULT NULL,
-  `detalles` varchar(300) DEFAULT NULL,
+  `objeto` varchar(300) DEFAULT NULL,
   `vendedor_id` int(11) DEFAULT NULL,
   `cliente_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `presupuestos`
+--
+
+INSERT INTO `presupuestos` (`id`, `fecha`, `monto`, `objeto`, `vendedor_id`, `cliente_id`) VALUES
+(1, '2023-11-15', 20.00, 'Rif', 4, 1),
+(2, '2022-11-11', 20.00, 'Factura', 2, 1),
+(3, '2024-11-15', 40.00, 'Imprenta', 1, 1),
+(4, '2024-12-15', 40.00, 'asodkfaosdf', 1, 1);
 
 -- --------------------------------------------------------
 
@@ -138,11 +148,18 @@ INSERT INTO `ventas` (`id`, `fecha`, `monto`, `objeto`, `vendedor_id`, `cliente_
 
 CREATE TABLE `visitas` (
   `id` int(11) NOT NULL,
-  `fecha` date DEFAULT NULL,
+  `fecha` varchar(300) DEFAULT NULL,
   `motivo` varchar(300) DEFAULT NULL,
   `vendedor_id` int(11) DEFAULT NULL,
   `cliente_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `visitas`
+--
+
+INSERT INTO `visitas` (`id`, `fecha`, `motivo`, `vendedor_id`, `cliente_id`) VALUES
+(2, '2024-11-15', 'Apenas fui', 2, 1);
 
 --
 -- Índices para tablas volcadas
@@ -210,7 +227,7 @@ ALTER TABLE `login`
 -- AUTO_INCREMENT de la tabla `presupuestos`
 --
 ALTER TABLE `presupuestos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT de la tabla `proyectos`
@@ -228,7 +245,7 @@ ALTER TABLE `ventas`
 -- AUTO_INCREMENT de la tabla `visitas`
 --
 ALTER TABLE `visitas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- Restricciones para tablas volcadas
