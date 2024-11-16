@@ -9,6 +9,7 @@ const Dashboard = lazy(() => import('../components/Pages/Dashboard'))
 const Usuarios = lazy(() => import('../components/Pages/Usuarios'))
 const Clientes = lazy(() => import('../components/Pages/Clientes'))
 const Ventas = lazy(() => import('../components/Pages/Ventas'))
+const Presupuestos = lazy(() => import('../components/Pages/Presupuestos'))
 
 
 const routes = [
@@ -45,6 +46,11 @@ const routes = [
 				path: `/${APP_VALUES.ROOT_ROUTE}/ventas`,
 				exact: true,
 				render: props => <RouteController component={Ventas} {...props} />
+			},
+			{
+				path: `/${APP_VALUES.ROOT_ROUTE}/presupuestos`,
+				exact: true,
+				render: props => <RouteController component={Presupuestos} {...props} />
 			},
 			{
 				path: `/${APP_VALUES.ROOT_ROUTE}/*`,

@@ -6,7 +6,7 @@ import ApiRequest from '../../../helpers/axiosInstances'
 import ToastAutoHide from '../../common/ToastAutoHide'
 import { transformDate } from '../../../helpers/utils'
 
-const Ventas = () => {
+const Presupuestos = () => {
     const initialState = { objeto: '', descripcion: '', fecha: transformDate(new Date()), vendedor_nombre: '', cliente_nombre: '', monto: '' }
     const [proyectosList, setProyectosList] = useState([])
     const [page, setPage] = useState(0)
@@ -24,7 +24,7 @@ const Ventas = () => {
 
     const getProyectos = async () => {
         try {
-            const { data } = await ApiRequest().get('/proyectos')
+            const { data } = await ApiRequest().get('/presupuestos')
             setProyectosList(data)
         } catch (error) {
             console.log(error)
@@ -37,7 +37,7 @@ const Ventas = () => {
 
     const submitProyecto = async () => {
         try {
-            const { data } = await ApiRequest().post('/proyectos/guardar', body)
+            const { data } = await ApiRequest().post('/presupuestos/guardar', body)
             handleDialog()
             getProyectos()
             setMensaje({
@@ -58,7 +58,7 @@ const Ventas = () => {
     // Actualización de la función de eliminación
     const deleteProyecto = async (id) => {
         try {
-            const { data } = await ApiRequest().post('/proyectos/eliminar', { id: id })
+            const { data } = await ApiRequest().post('/presupuestos/eliminar', { id: id })
             getProyectos()
             setMensaje({
                 ident: new Date().getTime(),
@@ -78,7 +78,7 @@ const Ventas = () => {
     useEffect(getProyectos, [])
 
     return (
-        <Page title="SELLER | Ventas">
+        <Page title="SELLER | Presupuestos">
             <ToastAutoHide message={mensaje} />
             <Dialog open={openDialog} onClose={handleDialog} fullWidth>
                 <DialogTitle>Nueva venta</DialogTitle>
@@ -143,16 +143,16 @@ const Ventas = () => {
                 </DialogContent>
                 <DialogActions>
                     <Button variant='contained' color='secondary' onClick={handleDialog}>Cancelar</Button>
-                    <Button variant='contained' color='primary' onClick={submitProyecto}>Añadir venta</Button>
+                    <Button variant='contained' color='primary' onClick={submitProyecto}>Añadir presupuesto</Button>
                 </DialogActions>
             </Dialog>
             <Container maxWidth="lg">
                 <Box sx={{ pb: 5 }}>
-                    <Typography variant="h5">Lista de ventas</Typography>
+                    <Typography variant="h5">Lista de Presupuestos</Typography>
                 </Box>
                 <Grid container spacing={2}>
                     <Grid item xs={12} sm={4}>
-                        <Button variant='contained' color='primary' onClick={handleDialog}>Añadir venta</Button>
+                        <Button variant='contained' color='primary' onClick={handleDialog}>Añadir presupuesto</Button>
                     </Grid>
                     <Grid item xs={12} sm={8} />
                     {proyectosList.slice(page * 10, page * 10 + 10).map((item, index) => (
@@ -200,4 +200,4 @@ const ProyectosCard = ({ id, imagen, objeto, descripcion, fecha, vendedor_nombre
     );
 };
 
-export default Ventas
+export default Presupuestos

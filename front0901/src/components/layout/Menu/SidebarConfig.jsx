@@ -23,14 +23,14 @@ const sidebarConfig = [
 		icon: <MonetizationOn />
 	},
 	{
-		title: 'Visitas',
-		path: '/app/proyectos',
-		icon: <AddLocationAlt />
+		title: 'Presupuestos',
+		path: '/app/presupuestos',
+		icon: <Receipt />
 	},
 	{
-		title: 'Presupuestos',
-		path: '/app/proyectos',
-		icon: <Receipt />
+		title: 'Visitas',
+		path: '/app/visitas',
+		icon: <AddLocationAlt />
 	}
 	
 ]
