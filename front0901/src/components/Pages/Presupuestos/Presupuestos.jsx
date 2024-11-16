@@ -159,7 +159,7 @@ const Presupuestos = () => {
     <Grid key={index} item xs={12} sm={4} sx={{ mt: 3 }}>
         <ProyectosCard
             id={item.id}  // Pasar el ID al componente
-            imagen="https://img.freepik.com/vector-premium/ilustracion-vector-prueba-trabajo-examen_138676-243.jpg?semt=ais_hybrid"
+            imagen="https://i.pinimg.com/originals/9a/e7/3f/9ae73f54f07ea9594ab6c521a61dcdb2.png"
             objeto={item.objeto}
             descripcion={item.descripcion}
             fecha={item.fecha}

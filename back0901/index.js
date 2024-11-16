@@ -497,6 +497,17 @@ app.get('/api/dashboard/meses', (req, res) => {
     });
 });
 
+app.get('/api/dashboard/visitas', (req, res) => {
+	var connection = mysql.createConnection(credentials)
+	connection.query('SELECT l.user, COUNT(v.vendedor_id) AS cantidad_visitas FROM visitas v JOIN login l ON v.vendedor_id = l.id GROUP BY l.user ORDER BY cantidad_visitas DESC LIMIT 3;', (err, rows) => {
+		if (err) {
+			res.status(500).send(err)
+		} else {
+			res.status(200).send(rows)
+		}
+	})
+})
+
 
 app.listen(4000, async () => {
 	const ascified = await asciify('helmet.png', { fit: 'box', width: 10, height: 10 })

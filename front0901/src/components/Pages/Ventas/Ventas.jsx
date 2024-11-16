@@ -159,7 +159,7 @@ const Ventas = () => {
     <Grid key={index} item xs={12} sm={4} sx={{ mt: 3 }}>
         <ProyectosCard
             id={item.id}  // Pasar el ID al componente
-            imagen="https://img.freepik.com/vector-premium/ilustracion-vector-prueba-trabajo-examen_138676-243.jpg?semt=ais_hybrid"
+            imagen="https://www.creativefabrica.com/wp-content/uploads/2021/06/13/Earning-Sales-Growth-Icon-Graphics-13339632-1.jpg"
             objeto={item.objeto}
             descripcion={item.descripcion}
             fecha={item.fecha}

@@ -6,7 +6,6 @@ import axios from "axios"; // Para la solicitud al backend
 import "./App.css";
 
 import revenueData from "./data/revenueData.json";
-import sourceData from "./data/sourceData.json";
 
 defaults.maintainAspectRatio = false;
 defaults.responsive = true;
@@ -19,6 +18,7 @@ defaults.plugins.title.color = "black";
 export const Dashboard = () => {
   const [salesData, setSalesData] = useState({ labels: [], ventas: [], presupuestos: [] });
   const [categoryData, setCategoryData] = useState([]); // Mejores vendedores
+  const [customerData, setCustomerData] = useState({ labels: [], data: [] }); // Para customerCard
 
   // Solicitud al backend para ventas y presupuestos
   useEffect(() => {
@@ -58,6 +58,24 @@ export const Dashboard = () => {
       })
       .catch((error) => {
         console.error("Error fetching data for categoryCard:", error);
+      });
+  }, []);
+
+  // Solicitud al backend para visitas a clientes (customerCard)
+  useEffect(() => {
+    axios
+      .get("http://localhost:4000/api/dashboard/visitas")
+      .then((response) => {
+        const labels = response.data.map((item) => item.user); // Extraer los nombres de usuario
+        const data = response.data.map((item) => item.cantidad_visitas); // Extraer las cantidades de visitas
+
+        setCustomerData({
+          labels: labels,
+          data: data,
+        });
+      })
+      .catch((error) => {
+        console.error("Error fetching data for customerCard:", error);
       });
   }, []);
 
@@ -102,11 +120,11 @@ export const Dashboard = () => {
       <div className="dataCard customerCard">
         <Bar
           data={{
-            labels: sourceData.map((data) => data.label),
+            labels: customerData.labels, // Nombres de usuario
             datasets: [
               {
-                label: "Cuenta",
-                data: sourceData.map((data) => data.value),
+                label: "Cantidad de visitas",
+                data: customerData.data, // Cantidades de visitas
                 backgroundColor: [
                   "rgba(43, 63, 229, 0.8)",
                   "rgba(250, 192, 19, 0.8)",
@@ -163,4 +181,5 @@ export const Dashboard = () => {
 };
 
 export default Dashboard;
+
 

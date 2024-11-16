@@ -152,7 +152,7 @@ const Visitas = () => {
     <Grid key={index} item xs={12} sm={4} sx={{ mt: 3 }}>
         <ProyectosCard
             id={item.id}  // Asegúrate de que 'item.id' contiene el ID
-            imagen="https://img.freepik.com/vector-premium/ilustracion-vector-prueba-trabajo-examen_138676-243.jpg?semt=ais_hybrid"
+            imagen="https://cdn-icons-png.flaticon.com/512/753/753114.png"
             fecha={item.fecha}
             motivo={item.motivo}
             nombre_vendedor={item.nombre_vendedor}

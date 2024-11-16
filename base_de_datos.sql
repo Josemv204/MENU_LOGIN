@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1:3306
--- Tiempo de generación: 16-11-2024 a las 03:04:42
+-- Tiempo de generación: 16-11-2024 a las 03:28:56
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -159,7 +159,10 @@ CREATE TABLE `visitas` (
 --
 
 INSERT INTO `visitas` (`id`, `fecha`, `motivo`, `vendedor_id`, `cliente_id`) VALUES
-(2, '2024-11-15', 'Apenas fui', 2, 1);
+(1, '2024-5-12', 'Pa revisar', 4, 1),
+(2, '2024-11-15', 'Apenas fui', 2, 1),
+(3, '2024-6-20', 'Pa vel', 4, 1),
+(4, '2024-3-12', 'Pa corrobora', 1, 1);
 
 --
 -- Índices para tablas volcadas
@@ -245,7 +248,7 @@ ALTER TABLE `ventas`
 -- AUTO_INCREMENT de la tabla `visitas`
 --
 ALTER TABLE `visitas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- Restricciones para tablas volcadas
