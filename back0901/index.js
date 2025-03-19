@@ -319,7 +319,7 @@ app.post('/api/presupuestos/mover-a-ventas', (req, res) => {
                 } else if (deleteResult.affectedRows === 0) {
                     res.status(404).send('Presupuesto no encontrado');
                 } else {
-                    res.status(200).send('Presupuesto movido a ventas con éxito');
+                    res.status(200).send('Presupuesto aprobado a ventas con éxito');
                 }
                 connection.end();
             });
