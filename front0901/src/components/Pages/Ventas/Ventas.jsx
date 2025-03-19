@@ -7,7 +7,7 @@ import { transformDate } from '../../../helpers/utils';
 import * as XLSX from 'xlsx'; // Importa la biblioteca xlsx
 
 const Ventas = () => {
-    const initialState = { objeto: '', descripcion: '', fecha: transformDate(new Date()), vendedor_nombre: '', cliente_nombre: '', monto: '' };
+    const initialState = { objeto: '', fecha: transformDate(new Date()), vendedor_nombre: '', cliente_nombre: '', monto: '' }; // Eliminado descripción
     const [proyectosList, setProyectosList] = useState([]);
     const [page, setPage] = useState(0);
     const [body, setBody] = useState(initialState);
@@ -77,25 +77,16 @@ const Ventas = () => {
     const exportToExcel = () => {
         // Crear un array de arrays con los datos
         const data = [
-            // Encabezados en negrita
-            [
-                { v: 'ID', t: 's', s: { font: { bold: true } } },
-                { v: 'Objeto', t: 's', s: { font: { bold: true } } },
-                { v: 'Descripción', t: 's', s: { font: { bold: true } } },
-                { v: 'Fecha', t: 's', s: { font: { bold: true } } },
-                { v: 'Vendedor', t: 's', s: { font: { bold: true } } },
-                { v: 'Cliente', t: 's', s: { font: { bold: true } } },
-                { v: 'Monto', t: 's', s: { font: { bold: true } } },
-            ],
+            // Encabezados
+            ["ID", "Objeto", "Fecha", "Vendedor", "Cliente", "Monto"], // Eliminado "Descripción"
             // Datos de las ventas
             ...proyectosList.map((item) => [
                 item.id,
                 item.objeto,
-                item.descripcion,
                 item.fecha,
                 item.vendedor_nombre,
                 item.cliente_nombre,
-                item.monto,
+                `$${item.monto}`, // Agregar el signo $ al monto
             ]),
         ];
 
@@ -103,6 +94,17 @@ const Ventas = () => {
         const ws = XLSX.utils.aoa_to_sheet(data);
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, "Ventas");
+
+        // Aplicar estilos a los encabezados (negrita)
+        if (!ws["!cols"]) ws["!cols"] = [];
+        ws["!cols"][0] = { wch: 10 }; // Ancho de columna para ID
+        ws["!cols"][1] = { wch: 20 }; // Ancho de columna para Objeto
+        ws["!cols"][2] = { wch: 15 }; // Ancho de columna para Fecha
+        ws["!cols"][3] = { wch: 20 }; // Ancho de columna para Vendedor
+        ws["!cols"][4] = { wch: 20 }; // Ancho de columna para Cliente
+        ws["!cols"][5] = { wch: 15 }; // Ancho de columna para Monto
+
+        // Guardar el archivo
         XLSX.writeFile(wb, "Ventas.xlsx");
     };
 
@@ -132,16 +134,18 @@ const Ventas = () => {
                     <Typography variant="h5">Lista de ventas</Typography>
                 </Box>
                 <Grid container spacing={2}>
-                    <Grid item xs={12} sm={4}>
+                    {/* Botones de Añadir venta y Exportar a Excel */}
+                    <Grid item xs={12} sx={{ display: 'flex', gap: 2, mb: 2 }}>
                         <Button variant='contained' color='primary' onClick={handleDialog}>Añadir venta</Button>
+                        <Button variant="contained" color="success" onClick={exportToExcel}>Exportar a Excel</Button>
                     </Grid>
+                    {/* Lista de ventas */}
                     {proyectosList.slice(page * 10, page * 10 + 10).map((item, index) => (
                         <Grid key={index} item xs={12} sm={4} sx={{ mt: 3 }}>
                             <ProyectosCard
                                 id={item.id}
                                 imagen="https://www.creativefabrica.com/wp-content/uploads/2021/06/13/Earning-Sales-Growth-Icon-Graphics-13339632-1.jpg"
                                 objeto={item.objeto}
-                                descripcion={item.descripcion}
                                 fecha={item.fecha}
                                 vendedor_nombre={item.vendedor_nombre}
                                 cliente_nombre={item.cliente_nombre}
@@ -156,7 +160,6 @@ const Ventas = () => {
                             <thead>
                                 <tr>
                                     <th>Objeto</th>
-                                    <th>Descripción</th>
                                     <th>Fecha</th>
                                     <th>Vendedor</th>
                                     <th>Cliente</th>
@@ -167,7 +170,6 @@ const Ventas = () => {
                                 {proyectosList.map((item, index) => (
                                     <tr key={index}>
                                         <td>{item.objeto}</td>
-                                        <td>{item.descripcion}</td>
                                         <td>{item.fecha}</td>
                                         <td>{item.vendedor_nombre}</td>
                                         <td>{item.cliente_nombre}</td>
@@ -177,10 +179,9 @@ const Ventas = () => {
                             </tbody>
                         </table>
 
-                        {/* Paginación y botón de exportar */}
+                        {/* Paginación */}
                         <Box sx={{ mt: 4, display: 'flex', alignItems: 'center', flexDirection: 'column', gap: 2 }}>
                             <Pagination count={Math.ceil(proyectosList.length / 10)} color="primary" onChange={handlePage} />
-                            <Button variant="contained" color="success" onClick={exportToExcel}>Exportar a Excel</Button>
                         </Box>
                     </Grid>
                 </Grid>
@@ -189,12 +190,11 @@ const Ventas = () => {
     );
 };
 
-const ProyectosCard = ({ id, imagen, objeto, descripcion, fecha, vendedor_nombre, cliente_nombre, monto, actionDelete }) => {
+const ProyectosCard = ({ id, imagen, objeto, fecha, vendedor_nombre, cliente_nombre, monto, actionDelete }) => {
     return (
         <Box sx={{ border: '1px solid #ddd', padding: 2, borderRadius: 2 }}>
             <img src={imagen} alt="Proyecto" style={{ width: '100%', borderRadius: 8 }} />
             <Typography variant="h6">{objeto}</Typography>
-            <Typography variant="body2">{descripcion}</Typography>
             <Typography variant="body2"><strong>Fecha:</strong> {fecha}</Typography>
             <Typography variant="body2"><strong>Vendedor:</strong> {vendedor_nombre}</Typography>
             <Typography variant="body2"><strong>Cliente:</strong> {cliente_nombre}</Typography>

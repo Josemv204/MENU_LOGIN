@@ -1,81 +1,133 @@
-import React, { useState, useEffect } from 'react'
-import { Box, Container, Typography, Grid, Pagination, Dialog, DialogTitle, DialogContent, TextField, Button, DialogActions } from '@mui/material'
-import Page from '../../common/Page'
-import ApiRequest from '../../../helpers/axiosInstances'
-// ----------------------------------------------------------------------
-import ToastAutoHide from '../../common/ToastAutoHide'
-import { transformDate } from '../../../helpers/utils'
+import React, { useState, useEffect } from 'react';
+import { Box, Container, Typography, Grid, Pagination, Dialog, DialogTitle, DialogContent, TextField, Button, DialogActions } from '@mui/material';
+import Page from '../../common/Page';
+import ApiRequest from '../../../helpers/axiosInstances';
+import ToastAutoHide from '../../common/ToastAutoHide';
+import { transformDate } from '../../../helpers/utils';
+import * as XLSX from 'xlsx'; // Importa la biblioteca xlsx
 
 const Presupuestos = () => {
-    const initialState = { objeto: '', descripcion: '', fecha: transformDate(new Date()), vendedor_nombre: '', cliente_nombre: '', monto: '' }
-    const [proyectosList, setProyectosList] = useState([])
-    const [page, setPage] = useState(0)
-    const [body, setBody] = useState(initialState)
-    const [openDialog, setOpenDialog] = useState(false)
-    const [mensaje, setMensaje] = useState({ ident: null, message: null, type: null })
+    const initialState = { objeto: '', fecha: transformDate(new Date()), vendedor_nombre: '', cliente_nombre: '', monto: '' }; // Eliminado descripción
+    const [proyectosList, setProyectosList] = useState([]);
+    const [page, setPage] = useState(0);
+    const [body, setBody] = useState(initialState);
+    const [openDialog, setOpenDialog] = useState(false);
+    const [mensaje, setMensaje] = useState({ ident: null, message: null, type: null });
 
     const handleDialog = () => {
-        setOpenDialog(prev => !prev)
-    }
+        setOpenDialog(prev => !prev);
+    };
 
     const handlePage = (event, newPage) => {
-        setPage(newPage - 1)
-    }
+        setPage(newPage - 1);
+    };
 
     const getProyectos = async () => {
         try {
-            const { data } = await ApiRequest().get('/presupuestos')
-            setProyectosList(data)
+            const { data } = await ApiRequest().get('/presupuestos');
+            setProyectosList(data);
         } catch (error) {
-            console.log(error)
+            console.log(error);
         }
-    }
+    };
 
     const onChange = ({ target: { name, value } }) => {
-        setBody({ ...body, [name]: value })
-    }
+        setBody({ ...body, [name]: value });
+    };
 
     const submitProyecto = async () => {
         try {
-            const { data } = await ApiRequest().post('/presupuestos/guardar', body)
-            handleDialog()
-            getProyectos()
+            const { data } = await ApiRequest().post('/presupuestos/guardar', body);
+            handleDialog();
+            getProyectos();
             setMensaje({
                 ident: new Date().getTime(),
                 message: data,
                 type: 'success'
-            })
-            setBody(initialState)
+            });
+            setBody(initialState);
         } catch ({ response }) {
             setMensaje({
                 ident: new Date().getTime(),
                 message: response.data,
                 type: 'error'
-            })
+            });
         }
-    }
+    };
 
-    // Actualización de la función de eliminación
     const deleteProyecto = async (id) => {
         try {
-            const { data } = await ApiRequest().post('/presupuestos/eliminar', { id: id })
-            getProyectos()
+            const { data } = await ApiRequest().post('/presupuestos/eliminar', { id: id });
+            getProyectos();
             setMensaje({
                 ident: new Date().getTime(),
                 message: data,
                 type: 'success'
-            })
+            });
         } catch ({ response }) {
             setMensaje({
                 ident: new Date().getTime(),
                 message: response.data,
                 type: 'error'
-            })
+            });
         }
-    }
-    
+    };
 
-    useEffect(getProyectos, [])
+    // Función para exportar a Excel
+    const exportToExcel = () => {
+        try {
+            // Crear un array de arrays con los datos
+            const data = [
+                // Encabezados
+                ["ID", "Objeto", "Fecha", "Vendedor", "Cliente", "Monto"],
+                // Datos de los presupuestos
+                ...proyectosList.map((item) => [
+                    item.id,
+                    item.objeto,
+                    transformDate(item.fecha), // Formatear la fecha
+                    item.vendedor_nombre,
+                    item.cliente_nombre,
+                    `${item.monto} Bs`, // Agregar la moneda al monto
+                ]),
+            ];
+
+            // Crear la hoja de cálculo
+            const ws = XLSX.utils.aoa_to_sheet(data);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Presupuestos");
+
+            // Aplicar estilos a los encabezados (negrita)
+            const headerStyle = { font: { bold: true }, alignment: { horizontal: 'center' } };
+            const range = XLSX.utils.decode_range(ws['!ref']);
+            for (let C = range.s.c; C <= range.e.c; ++C) {
+                const cellAddress = XLSX.utils.encode_cell({ r: 0, c: C });
+                if (!ws[cellAddress].s) ws[cellAddress].s = {};
+                Object.assign(ws[cellAddress].s, headerStyle);
+            }
+
+            // Ajustar el ancho de las columnas
+            ws['!cols'] = [
+                { wch: 10 }, // Ancho de columna para ID
+                { wch: 20 }, // Ancho de columna para Objeto
+                { wch: 15 }, // Ancho de columna para Fecha
+                { wch: 20 }, // Ancho de columna para Vendedor
+                { wch: 20 }, // Ancho de columna para Cliente
+                { wch: 15 }, // Ancho de columna para Monto
+            ];
+
+            // Guardar el archivo
+            XLSX.writeFile(wb, "Presupuestos.xlsx");
+        } catch (error) {
+            console.error("Error al exportar a Excel:", error);
+            setMensaje({
+                ident: new Date().getTime(),
+                message: "Error al exportar a Excel",
+                type: 'error'
+            });
+        }
+    };
+
+    useEffect(getProyectos, []);
 
     return (
         <Page title="SELLER | Presupuestos">
@@ -151,46 +203,43 @@ const Presupuestos = () => {
                     <Typography variant="h5">Lista de Presupuestos</Typography>
                 </Box>
                 <Grid container spacing={2}>
-                    <Grid item xs={12} sm={4}>
+                    {/* Botones de Añadir presupuesto y Exportar a Excel */}
+                    <Grid item xs={12} sx={{ display: 'flex', gap: 2, mb: 2 }}>
                         <Button variant='contained' color='primary' onClick={handleDialog}>Añadir presupuesto</Button>
+                        <Button variant="contained" color="success" onClick={exportToExcel}>Exportar a Excel</Button>
                     </Grid>
-                    <Grid item xs={12} sm={8} />
+                    {/* Lista de presupuestos */}
                     {proyectosList.slice(page * 10, page * 10 + 10).map((item, index) => (
-    <Grid key={index} item xs={12} sm={4} sx={{ mt: 3 }}>
-        <ProyectosCard
-            id={item.id}  // Pasar el ID al componente
-            imagen="https://i.pinimg.com/originals/9a/e7/3f/9ae73f54f07ea9594ab6c521a61dcdb2.png"
-            objeto={item.objeto}
-            descripcion={item.descripcion}
-            fecha={item.fecha}
-            vendedor_nombre={item.vendedor_nombre}
-            cliente_nombre={item.cliente_nombre}
-            monto={item.monto}
-            actionDelete={() => deleteProyecto(item.id)}  // Enviar el ID
-        />
-    </Grid>
-))}
-
-                    <Grid item xs={12} sm={12}>
-                        <Box sx={{ mt: 4, display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
-                            <Pagination
-                                count={Math.ceil(proyectosList.length / 10)}
-                                color='primary'
-                                onChange={handlePage} />
+                        <Grid key={index} item xs={12} sm={4} sx={{ mt: 3 }}>
+                            <ProyectosCard
+                                id={item.id}
+                                imagen="https://i.pinimg.com/originals/9a/e7/3f/9ae73f54f07ea9594ab6c521a61dcdb2.png"
+                                objeto={item.objeto}
+                                fecha={item.fecha}
+                                vendedor_nombre={item.vendedor_nombre}
+                                cliente_nombre={item.cliente_nombre}
+                                monto={item.monto}
+                                actionDelete={() => deleteProyecto(item.id)}
+                            />
+                        </Grid>
+                    ))}
+                    <Grid item xs={12}>
+                        {/* Paginación */}
+                        <Box sx={{ mt: 4, display: 'flex', alignItems: 'center', flexDirection: 'column', gap: 2 }}>
+                            <Pagination count={Math.ceil(proyectosList.length / 10)} color="primary" onChange={handlePage} />
                         </Box>
                     </Grid>
                 </Grid>
             </Container>
         </Page>
-    )
-}
+    );
+};
 
-const ProyectosCard = ({ id, imagen, objeto, descripcion, fecha, vendedor_nombre, cliente_nombre, monto, actionDelete }) => {
+const ProyectosCard = ({ id, imagen, objeto, fecha, vendedor_nombre, cliente_nombre, monto, actionDelete }) => {
     return (
         <Box sx={{ border: '1px solid #ddd', padding: 2, borderRadius: 2 }}>
             <img src={imagen} alt="Proyecto" style={{ width: '100%', borderRadius: 8 }} />
             <Typography variant="h6">{objeto}</Typography>
-            <Typography variant="body2">{descripcion}</Typography>
             <Typography variant="body2"><strong>Fecha:</strong> {fecha}</Typography>
             <Typography variant="body2"><strong>Vendedor:</strong> {vendedor_nombre}</Typography>
             <Typography variant="body2"><strong>Cliente:</strong> {cliente_nombre}</Typography>
@@ -200,4 +249,4 @@ const ProyectosCard = ({ id, imagen, objeto, descripcion, fecha, vendedor_nombre
     );
 };
 
-export default Presupuestos
+export default Presupuestos;
