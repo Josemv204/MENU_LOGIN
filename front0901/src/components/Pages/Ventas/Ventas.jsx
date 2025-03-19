@@ -9,10 +9,12 @@ import * as XLSX from 'xlsx'; // Importa la biblioteca xlsx
 const Ventas = () => {
     const initialState = { objeto: '', fecha: transformDate(new Date()), vendedor_nombre: '', cliente_nombre: '', monto: '' }; // Eliminado descripción
     const [proyectosList, setProyectosList] = useState([]);
+    const [filteredProyectosList, setFilteredProyectosList] = useState([]);
     const [page, setPage] = useState(0);
     const [body, setBody] = useState(initialState);
     const [openDialog, setOpenDialog] = useState(false);
     const [mensaje, setMensaje] = useState({ ident: null, message: null, type: null });
+    const [selectedMonth, setSelectedMonth] = useState('');
     const tableRef = useRef(null); // Referencia para la tabla oculta
 
     const handleDialog = () => {
@@ -27,6 +29,7 @@ const Ventas = () => {
         try {
             const { data } = await ApiRequest().get('/proyectos');
             setProyectosList(data);
+            setFilteredProyectosList(data); // Inicialmente mostrar todas las ventas
         } catch (error) {
             console.log(error);
         }
@@ -80,7 +83,7 @@ const Ventas = () => {
             // Encabezados
             ["ID", "Objeto", "Fecha", "Vendedor", "Cliente", "Monto"], // Eliminado "Descripción"
             // Datos de las ventas
-            ...proyectosList.map((item) => [
+            ...filteredProyectosList.map((item) => [
                 item.id,
                 item.objeto,
                 item.fecha,
@@ -106,6 +109,22 @@ const Ventas = () => {
 
         // Guardar el archivo
         XLSX.writeFile(wb, "Ventas.xlsx");
+    };
+
+    const handleMonthChange = (event) => {
+        const selectedMonth = event.target.value;
+        setSelectedMonth(selectedMonth);
+
+        if (selectedMonth) {
+            const filtered = proyectosList.filter(proyecto => {
+                const proyectoDate = new Date(proyecto.fecha);
+                const proyectoMonth = proyectoDate.getFullYear() + '-' + String(proyectoDate.getMonth() + 1).padStart(2, '0');
+                return proyectoMonth === selectedMonth;
+            });
+            setFilteredProyectosList(filtered);
+        } else {
+            setFilteredProyectosList(proyectosList);
+        }
     };
 
     useEffect(getProyectos, []);
@@ -138,9 +157,19 @@ const Ventas = () => {
                     <Grid item xs={12} sx={{ display: 'flex', gap: 2, mb: 2 }}>
                         <Button variant='contained' color='primary' onClick={handleDialog}>Añadir venta</Button>
                         <Button variant="contained" color="success" onClick={exportToExcel}>Exportar a Excel</Button>
+                        <TextField
+                            type="month"
+                            value={selectedMonth}
+                            onChange={handleMonthChange}
+                            variant="outlined"
+                            size="small"
+                            InputLabelProps={{
+                                shrink: true,
+                            }}
+                        />
                     </Grid>
                     {/* Lista de ventas */}
-                    {proyectosList.slice(page * 10, page * 10 + 10).map((item, index) => (
+                    {filteredProyectosList.slice(page * 10, page * 10 + 10).map((item, index) => (
                         <Grid key={index} item xs={12} sm={4} sx={{ mt: 3 }}>
                             <ProyectosCard
                                 id={item.id}
@@ -167,7 +196,7 @@ const Ventas = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {proyectosList.map((item, index) => (
+                                {filteredProyectosList.map((item, index) => (
                                     <tr key={index}>
                                         <td>{item.objeto}</td>
                                         <td>{item.fecha}</td>
@@ -181,7 +210,7 @@ const Ventas = () => {
 
                         {/* Paginación */}
                         <Box sx={{ mt: 4, display: 'flex', alignItems: 'center', flexDirection: 'column', gap: 2 }}>
-                            <Pagination count={Math.ceil(proyectosList.length / 10)} color="primary" onChange={handlePage} />
+                            <Pagination count={Math.ceil(filteredProyectosList.length / 10)} color="primary" onChange={handlePage} />
                         </Box>
                     </Grid>
                 </Grid>

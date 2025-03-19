@@ -280,6 +280,53 @@ app.post('/api/presupuestos/eliminar', (req, res) => {
     });
 });
 
+// Ruta para mover un presupuesto a ventas
+app.post('/api/presupuestos/mover-a-ventas', (req, res) => {
+    const { id } = req.body;
+    const connection = mysql.createConnection(credentials);
+
+    // Primero, obtener los datos del presupuesto
+    connection.query('SELECT * FROM presupuestos WHERE id = ?', [id], (err, presupuestoResult) => {
+        if (err) {
+            res.status(500).send(err.sqlMessage);
+            connection.end();
+            return;
+        }
+
+        if (presupuestoResult.length === 0) {
+            res.status(404).send('Presupuesto no encontrado');
+            connection.end();
+            return;
+        }
+
+        const presupuesto = presupuestoResult[0];
+
+        // Insertar el presupuesto en la tabla de ventas
+        const { fecha, monto, objeto, vendedor_id, cliente_id } = presupuesto;
+        const cuerpo = [[fecha, monto, objeto, vendedor_id, cliente_id]];
+
+        connection.query('INSERT INTO ventas (fecha, monto, objeto, vendedor_id, cliente_id) VALUES ?', [cuerpo], (err, result) => {
+            if (err) {
+                res.status(500).send(err.sqlMessage);
+                connection.end();
+                return;
+            }
+
+            // Si la inserción en ventas fue exitosa, eliminar el presupuesto
+            connection.query('DELETE FROM presupuestos WHERE id = ?', [id], (err, deleteResult) => {
+                if (err) {
+                    res.status(500).send(err.sqlMessage);
+                } else if (deleteResult.affectedRows === 0) {
+                    res.status(404).send('Presupuesto no encontrado');
+                } else {
+                    res.status(200).send('Presupuesto movido a ventas con éxito');
+                }
+                connection.end();
+            });
+        });
+    });
+});
+
 //--------------||VISITAS||-------------------
 app.get('/api/visitas', (req, res) => {
     var connection = mysql.createConnection(credentials);
