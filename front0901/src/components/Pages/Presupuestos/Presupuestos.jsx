@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Box, Container, Typography, Grid, Pagination, Dialog, DialogTitle, DialogContent, TextField, Button, DialogActions, Autocomplete } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { Box, Container, Typography, Grid, Pagination, Dialog, DialogTitle, DialogContent, TextField, Button, DialogActions } from '@mui/material';
 import Page from '../../common/Page';
 import ApiRequest from '../../../helpers/axiosInstances';
 import ToastAutoHide from '../../common/ToastAutoHide';
@@ -15,9 +15,6 @@ const Presupuestos = () => {
     const [openDialog, setOpenDialog] = useState(false);
     const [mensaje, setMensaje] = useState({ ident: null, message: null, type: null });
     const [selectedMonth, setSelectedMonth] = useState(''); // Nuevo estado para el mes seleccionado
-    const [vendedores, setVendedores] = useState([]); // Estado para almacenar la lista de vendedores
-    const [clientes, setClientes] = useState([]); // Estado para almacenar la lista de clientes
-    const tableRef = useRef(null); // Referencia para la tabla oculta
 
     const handleDialog = () => {
         setOpenDialog(prev => !prev);
@@ -32,26 +29,6 @@ const Presupuestos = () => {
             const { data } = await ApiRequest().get('/presupuestos');
             setProyectosList(data);
             setFilteredProyectosList(data); // Inicialmente mostrar todos los presupuestos
-        } catch (error) {
-            console.log(error);
-        }
-    };
-
-    // Función para obtener la lista de vendedores desde la tabla usuarios
-    const getVendedores = async () => {
-        try {
-            const { data } = await ApiRequest().get('/usuarios'); // Ajusta la ruta según tu API
-            setVendedores(data.map(item => ({ nombre: item.user }))); // Mapea la columna 'user' a 'nombre'
-        } catch (error) {
-            console.log(error);
-        }
-    };
-
-    // Función para obtener la lista de clientes desde la tabla clientes
-    const getClientes = async () => {
-        try {
-            const { data } = await ApiRequest().get('/clientes'); // Ajusta la ruta según tu API
-            setClientes(data.map(item => ({ nombre: item.nombre }))); // Mapea la columna 'nombre' a 'nombre'
         } catch (error) {
             console.log(error);
         }
@@ -132,7 +109,7 @@ const Presupuestos = () => {
                     transformDate(item.fecha), // Formatear la fecha
                     item.vendedor_nombre,
                     item.cliente_nombre,
-                    `${item.monto} Bs`, // Agregar la moneda al monto
+                    `${item.monto} $`, // Agregar la moneda al monto
                 ]),
             ];
 
@@ -189,12 +166,7 @@ const Presupuestos = () => {
         }
     };
 
-    // Obtener proyectos, vendedores y clientes al cargar el componente
-    useEffect(() => {
-        getProyectos();
-        getVendedores();
-        getClientes();
-    }, []);
+    useEffect(getProyectos, []);
 
     return (
         <Page title="SELLER | Presupuestos">
@@ -236,51 +208,27 @@ const Presupuestos = () => {
                             label='Fecha (YYYY-MM-DD)'
                             onChange={onChange}
                         />
-                        {/* Autocomplete para Vendedor */}
-                        <Autocomplete
-                            options={vendedores}
-                            getOptionLabel={(option) => option.nombre} // Usa el campo 'nombre' para mostrar en la lista
-                            value={body.vendedor_nombre ? vendedores.find(v => v.nombre === body.vendedor_nombre) || null : null}
-                            onChange={(event, newValue) => {
-                                setBody({ ...body, vendedor_nombre: newValue ? newValue.nombre : '' });
-                            }}
-                            renderInput={(params) => (
-                                <TextField
-                                    {...params}
-                                    name='vendedorNombre'
-                                    margin='normal'
-                                    size='small'
-                                    color='primary'
-                                    variant='outlined'
-                                    fullWidth
-                                    label='Vendedor'
-                                    sx={{ minWidth: '300px' }} // Ajusta el ancho del campo
-                                />
-                            )}
-                            sx={{ width: '100%' }} // Asegura que el Autocomplete ocupe todo el ancho
+                        <TextField
+                            name='vendedorNombre'
+                            margin='normal'
+                            size='small'
+                            value={body.vendedorNombre}
+                            color='primary'
+                            variant='outlined'
+                            fullWidth
+                            label='Vendedor'
+                            onChange={onChange}
                         />
-                        {/* Autocomplete para Cliente */}
-                        <Autocomplete
-                            options={clientes}
-                            getOptionLabel={(option) => option.nombre} // Usa el campo 'nombre' para mostrar en la lista
-                            value={body.cliente_nombre ? clientes.find(c => c.nombre === body.cliente_nombre) || null : null}
-                            onChange={(event, newValue) => {
-                                setBody({ ...body, cliente_nombre: newValue ? newValue.nombre : '' });
-                            }}
-                            renderInput={(params) => (
-                                <TextField
-                                    {...params}
-                                    name='clienteNombre'
-                                    margin='normal'
-                                    size='small'
-                                    color='primary'
-                                    variant='outlined'
-                                    fullWidth
-                                    label='Cliente'
-                                    sx={{ minWidth: '300px' }} // Ajusta el ancho del campo
-                                />
-                            )}
-                            sx={{ width: '100%' }} // Asegura que el Autocomplete ocupe todo el ancho
+                        <TextField
+                            name='clienteNombre'
+                            margin='normal'
+                            size='small'
+                            value={body.clienteNombre}
+                            color='primary'
+                            variant='outlined'
+                            fullWidth
+                            label='Cliente'
+                            onChange={onChange}
                         />
                     </Box>
                 </DialogContent>
@@ -314,7 +262,7 @@ const Presupuestos = () => {
                         <Grid key={index} item xs={12} sm={4} sx={{ mt: 3 }}>
                             <ProyectosCard
                                 id={item.id}
-                                imagen="https://i.pinimg.com/originals/9a/e7/3f/9ae73f54f07ea9594ab6c521a61dcdb2.png"
+                                imagen="https://i.imgur.com/izIgIVP.png"
                                 objeto={item.objeto}
                                 fecha={item.fecha}
                                 vendedor_nombre={item.vendedor_nombre}

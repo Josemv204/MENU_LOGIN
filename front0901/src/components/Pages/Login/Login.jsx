@@ -61,7 +61,7 @@ const Login = () => {
 				<CssBaseline />
 				<Grid item xs={false} sm={4} md={7}
 					sx={{
-						backgroundImage: 'url(https://wallpaperstock.net/metroid-wallpapers_20673_1440x900.jpg)',
+						backgroundImage: 'url(https://i.imgur.com/PjsTiVE.png)',
 						backgroundRepeat: 'no-repeat',
 						backgroundColor: (t) =>
 							t.palette.mode === 'light' ? "#27aae1" : "#27aae1",
@@ -77,7 +77,7 @@ const Login = () => {
 							<LockOutlined />
 						</Avatar>
 						<Typography component="h1" variant="h5">
-							Login
+							Iniciar sesión
 						</Typography>
 						<Box component="form" noValidate sx={{ mt: 1 }}>
 							<TextField
@@ -88,7 +88,7 @@ const Login = () => {
 								onChange={onChange}
 								variant="outlined"
 								margin="normal"
-								label="Username"
+								label="Nombre de usuario"
 								name="username"
 							/>
 							<TextField
@@ -99,7 +99,7 @@ const Login = () => {
 								onChange={onChange}
 								margin="normal"
 								name="password"
-								label="Password"
+								label="Contraseña"
 								type={showPass ? "text" : "password"}
 								autoComplete="password"
 								onKeyDown={e => { if (e.keyCode === 13) { handleSubmit() } }}
@@ -131,7 +131,7 @@ const Login = () => {
 							<Grid container>
 								<Grid item xs>
 									<Link href="/login" variant="body2">
-										¿Olvidaste tu contraseña?
+									
 									</Link>
 								</Grid>
 							</Grid>

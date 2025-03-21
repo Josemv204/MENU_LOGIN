@@ -20,23 +20,35 @@ export const Dashboard = () => {
   const [categoryData, setCategoryData] = useState([]); // Mejores vendedores
   const [customerData, setCustomerData] = useState({ labels: [], data: [] }); // Para customerCard
 
+  // Función para agrupar datos por mes
+  const groupDataByMonth = (data) => {
+    const groupedData = {};
+
+    data.forEach((item) => {
+      const month = item.mes;
+      if (!groupedData[month]) {
+        groupedData[month] = { ventas: 0, presupuestos: 0 };
+      }
+      if (item.origen === "ventas") {
+        groupedData[month].ventas += item.total;
+      } else if (item.origen === "presupuestos") {
+        groupedData[month].presupuestos += item.total;
+      }
+    });
+
+    const meses = Object.keys(groupedData);
+    const ventas = meses.map((mes) => groupedData[mes].ventas);
+    const presupuestos = meses.map((mes) => groupedData[mes].presupuestos);
+
+    return { meses, ventas, presupuestos };
+  };
+
   // Solicitud al backend para ventas y presupuestos
   useEffect(() => {
     axios
       .get("http://localhost:4000/api/dashboard/meses")
       .then((response) => {
-        const meses = [];
-        const ventas = [];
-        const presupuestos = [];
-
-        response.data.forEach((item) => {
-          meses.push(item.mes);
-          if (item.origen === "ventas") {
-            ventas.push(item.total);
-          } else if (item.origen === "presupuestos") {
-            presupuestos.push(item.total);
-          }
-        });
+        const { meses, ventas, presupuestos } = groupDataByMonth(response.data);
 
         setSalesData({
           labels: meses,
@@ -181,5 +193,4 @@ export const Dashboard = () => {
 };
 
 export default Dashboard;
-
 

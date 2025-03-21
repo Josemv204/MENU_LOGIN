@@ -8,7 +8,7 @@ import CommonTable from '../../common/CommonTable'
 
 const Usuarios = () => {
 	const initialState = {
-		avatar: 'https://i.imgur.com/JypTlSR.png',
+		avatar: '',
 		nombre: "",
 		apellido: ""
 	}
@@ -34,7 +34,7 @@ const Usuarios = () => {
 			)
 		},
 		{ field: 'user', headerName: 'Nombre', width: 220 },
-		{ field: 'username', headerName: 'Username', width: 220 },
+		{ field: 'username', headerName: 'Nombre de usuario', width: 220 },
 		{
 			field: '',
 			headerName: 'Acciones',
@@ -163,7 +163,7 @@ const Usuarios = () => {
 								size='small'
 								color='primary'
 								fullWidth
-								label='Username'
+								label='Nombre de usuario'
 							/>
 						</Grid>
 						<Grid item xs={12} sm={12}>

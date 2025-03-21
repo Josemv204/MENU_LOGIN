@@ -285,7 +285,7 @@ const Visitas = () => {
                         <Grid key={index} item xs={12} sm={4} sx={{ mt: 3 }}>
                             <ProyectosCard
                                 id={item.id}
-                                imagen="https://cdn-icons-png.flaticon.com/512/753/753114.png"
+                                imagen="https://i.imgur.com/Dk77I8l.png"
                                 fecha={item.fecha}
                                 motivo={item.motivo}
                                 nombre_vendedor={item.nombre_vendedor}
